@@ -23,8 +23,7 @@
   - cls 448
   - det 736-1120
 - 更长的训练周期 120e-130e
-- 通过增加seg头的hidden_dims以及det头的embedding_dims减少通道降维带来的信息损失
-  - hidden_dims 256-384
+- 通过增加det头的embedding_dims减少通道降维带来的信息损失
   - embedding_dims 256-384
 
 ### 训练步骤
@@ -32,8 +31,11 @@
 预训练权重放在pretrained/
 
 模型推理权重放在pretrained/
+链接：https://pan.baidu.com/s/1JyrQt6kbOvbP-YLQTpUlew 
+提取码：hgwv 
 
 ```python
+cd track1
 # 训练
 sh scripts/train.sh
 # 推理

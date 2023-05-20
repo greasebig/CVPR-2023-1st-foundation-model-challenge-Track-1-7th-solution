@@ -45,6 +45,7 @@ class SegmentationTransformer(nn.Layer):
     def __init__(self,
                  num_classes,
                  backbone_embed_dim=768,
+                 hidden_dim=256,
                  backbone_indices=(9, 14, 19, 23),
                  head='naive',
                  align_corners=False,
@@ -62,6 +63,7 @@ class SegmentationTransformer(nn.Layer):
                 num_classes=self.num_classes,
                 backbone_indices=backbone_indices,
                 in_channels=backbone_embed_dim,
+                hidden_dim=hidden_dim,
                 **head_config)
         elif head.lower() == 'pup':
             self.head = PUPHead(
@@ -133,6 +135,7 @@ class NaiveHead(nn.Layer):
                  num_classes,
                  backbone_indices,
                  in_channels,
+                 hidden_dim=256,
                  lr_multiple=10):
         super().__init__()
 
@@ -140,9 +143,9 @@ class NaiveHead(nn.Layer):
             normalized_shape=in_channels, epsilon=1e-6)
         self.cls_head = nn.Sequential(
             layers.ConvBNReLU(
-                in_channels=in_channels, out_channels=256, kernel_size=1),
+                in_channels=in_channels, out_channels=hidden_dim, kernel_size=1),
             nn.Conv2D(
-                in_channels=256, out_channels=num_classes, kernel_size=1))
+                in_channels=hidden_dim, out_channels=num_classes, kernel_size=1))
 
         aux_head_nums = len(backbone_indices) - 1
         self.aux_head_norms = nn.LayerList(
@@ -151,9 +154,9 @@ class NaiveHead(nn.Layer):
         self.aux_heads = nn.LayerList([
             nn.Sequential(
                 layers.ConvBNReLU(
-                    in_channels=in_channels, out_channels=256, kernel_size=1),
+                    in_channels=in_channels, out_channels=hidden_dim, kernel_size=1),
                 nn.Conv2D(
-                    in_channels=256, out_channels=num_classes, kernel_size=1))
+                    in_channels=hidden_dim, out_channels=num_classes, kernel_size=1))
         ] * aux_head_nums)
 
         self.in_channels = in_channels
